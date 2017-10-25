@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    *{
+        margin:0;
+        padding:0;
+    }
+    body,html{
+        height:100%;
+    }
+    body{
+        perspective: 800px;
+        position: relative;
+        background: #000;
+        /*overflow: hidden;*/
+        margin:0;
+    }
+    .box{
+
+        position: absolute;
+        width:133px;
+        height:200px;
+        top:50%;
+        left:50%;
+        -webkit-transform-style: preserve-3d;
+        -moz-transform-style: preserve-3d;
+        -ms-transform-style: preserve-3d;
+        transform-style: preserve-3d;
+        transform:translate(-50% ,-50%) rotateX(-10deg) rotateY(0deg);
+
+    }
+    .box img{
+        position: absolute;
+        top:0;
+        left:0;
+        width:133px;
+        height:200px;
+        -webkit-transform:rotateX(-50deg) rotateY(0deg);
+        -webkit-box-reflect:below 5px -webkit-linear-gradient(top,rgba(0,0,0,0) 40%,rgba(0,0,0,.3) 100%);
+    }
+
+</style>
+<body onselectstart="return false">
+<div class="box" id="Box">
+    <img src="images/1.jpg" alt="">
+    <img src="images/2.jpg" alt="">
+    <img src="images/3.jpg" alt="">
+    <img src="images/4.jpg" alt="">
+    <img src="images/5.jpg" alt="">
+    <img src="images/6.jpg" alt="">
+    <img src="images/7.jpg" alt="">
+    <img src="images/8.jpg" alt="">
+    <img src="images/9.jpg" alt="">
+    <img src="images/10.jpg" alt="">
+    <img src="images/11.jpg" alt="">
+</div>
+</body>
+<script>
+    var oBox=document.getElementById("Box");
+    var aImg=oBox.querySelectorAll(".box img");
+    var length=aImg.length;
+
+    var roY=0,roX=-10;
+    var eRoX,eRoY,nRoX,nRoY,sRoX,sRoY,Ux,Uy,Lx,Ly,timer;
+    //定义初始化加速度
+    for(var i=0;i<length;i++){
+        aImg[i].style.transform="rotateY("+i*32.7+"deg) translateZ(350px)";
+        aImg[i].ondragstart=function(){
+            return false;
+        }
+    }
+    document.onmousedown=function(e){
+        clearInterval(timer);
+        e=e||window.event;
+        sRoX=e.clientX;
+        sRoY=e.clientY;
+        this.onmousemove=function(ev){
+            ev=ev||window.event;
+            eRoX=ev.clientX;
+            eRoY=ev.clientY;
+
+            Ux=eRoX-Lx;
+            Uy=eRoY-Ly;
+
+            nRoY=(eRoY-sRoY)*0.2;
+            nRoX=(eRoX-sRoX)*0.2;
+            oBox.style.transform="translate(-50% ,-50%) rotateX("+(roX-nRoY)+"deg) rotateY("+(roY+nRoX)+"deg)";
+            Lx=ev.clientX;
+            Ly=ev.clientY;
+        };
+        this.onmouseup=function(){
+            roX=(roX-nRoY);
+            roY=(roY+nRoX);
+            timer=setInterval(function(){
+                Ux*=0.9;
+                Uy*=0.9;
+                roX-=Uy*0.3;
+                roY+=Ux*0.2;
+
+                if(Math.abs(Ux)<=0.1 && Math.abs(Uy)<=0.1){
+                    clearInterval(timer);
+                }
+                oBox.style.transform="translate(-50% ,-50%) rotateX("+(roX)+"deg) rotateY("+(roY)+"deg)";
+            },13);
+            this.onmousemove=null;
+        }
+    };
+
+</script>
+</html>
